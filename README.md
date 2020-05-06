@@ -9,19 +9,21 @@
 
 Thus, we introduced the CaféMQ (or CafeMQ for convenience), an I/Q data ralay with tunable noisy channel model based on ZeroMQ.
 
-## Architecture
-<p align="center">
-  <img src="https://github.com/ifTNT/cafemq/raw/master/docs/media/Architecture.png" alt="Architecture of CafeMQ">
-</p>
-
 ## Features
 
 - Compatible with srsLTE.
 - Tunable noisy channel model.
-  - Applying Additive white Gaussian noise(AWGN) to signal.
-  - Mixing I/Q data of different channel to emulate the interference between radio frequency.
-  - Multipath effect emulation.
+  - Add additive white Gaussian noise(AWGN) to signal with specificed SNR. [TODO]
+  - Rayleigh fading. [TODO]
+  - Rician fading. [TODO]
+  - Flat fading. [TODO]
+  - Frequency selective fading. [TODO]
 - Hight throughput.
+
+## Architecture
+<p align="center">
+  <img src="https://github.com/ifTNT/cafemq/raw/master/docs/media/Architecture.png" alt="Architecture of CafeMQ">
+</p>
 
 ## Installation
 
@@ -53,7 +55,7 @@ The following example assume you had installed srsLTE release 20.04.
 Launch CafeMQ:
 
 ```
-[todo]
+[TODO]
 ```
 
 Create a new namespace called "ue1":
@@ -88,6 +90,7 @@ sudo ip netns exec ue1 ping 172.16.0.1
 ```
 
 ## Performance
+[TODO]
 
 ## Contributer
 

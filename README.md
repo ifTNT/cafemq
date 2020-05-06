@@ -8,6 +8,9 @@
 
 Thus, we introduced the CaféMQ (or CafeMQ for convenience), an I/Q data ralay with tunable noisy channel model based on ZeroMQ.
 
+## Architecture
+![Architecture of CafeMQ](https://github.com/ifTNT/cafemq/raw/master/docs/media/Architecture.png)
+
 ## Features
 
 - Compatible with srsLTE.

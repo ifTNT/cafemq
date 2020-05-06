@@ -3,6 +3,12 @@ rust:
   - stable
   - beta
   - nightly
+
+before_install:
+  - sudo apt-get update
+  - echo "deb http://download.opensuse.org/repositories/network:/messaging:/zeromq:/release-stable/Debian_9.0/ ./" | sudo tee /etc/apt/sources.list
+  - wget https://download.opensuse.org/repositories/network:/messaging:/zeromq:/release-stable/Debian_9.0/Release.key -O- | sudo apt-key add
+  - sudo apt-get install libzmq3-dev
 script:
   - cargo build --verbose --all
   - cargo test --verbose --all

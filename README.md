@@ -1,6 +1,7 @@
 # CaféMQ
 
 [![Build Status](https://travis-ci.com/ifTNT/cafemq.svg?token=LxKCBVXqDBaiHcSwp4Uc&branch=master)](https://travis-ci.com/ifTNT/cafemq)
+[![GPLv3 license](https://img.shields.io/badge/License-LGPLv3-blue.svg)](https://opensource.org/licenses/lgpl-3.0.html)
 
 ## Introduction
 

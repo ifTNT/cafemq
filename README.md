@@ -22,7 +22,7 @@ After installation rust and cargo, we need to install the dependency using the f
 - For Ubuntu User:
 `sudo apt-get install libzmq3-dev`
 
-Now, you can build CafeMQ form the source.
+Now, you can build CafeMQ from the source.
 
 ```
 git clone https://github.com/ifTNT/cafemq.git

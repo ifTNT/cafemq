@@ -5,7 +5,7 @@
 
 ## Introduction
 
-[srsLTE](https://github.com/srsLTE/srsLTE) provided a virtual RF front-end based on [ZeroMQ](https://zeromq.org/) for convenient development. ZeroMQ is used here as an ideal physical channel to carry all of the I/Q data from Tx to Rx. However, the ideal channel is not suitable to perform an experiment of error-correction due the error is never occured in the ideal channel.
+[srsLTE](https://github.com/srsLTE/srsLTE) provide a virtual RF front-end based on [ZeroMQ](https://zeromq.org/) for convenient development. ZeroMQ is used here as an ideal physical channel to carry all of the I/Q data from Tx to Rx. However, the ideal channel is not suitable to perform an experiment of error-correction due the error is never occured in the ideal channel.
 
 Thus, we introduced the CaféMQ (or CafeMQ for convenience), an I/Q data ralay with tunable noisy channel model based on ZeroMQ.
 
@@ -18,7 +18,7 @@ Thus, we introduced the CaféMQ (or CafeMQ for convenience), an I/Q data ralay w
 
 - Compatible with srsLTE.
 - Tunable noisy channel model.
-  - Applying white noise to signal.
+  - Applying Additive white Gaussian noise(AWGN) to signal.
   - Mixing I/Q data of different channel to emulate the interference between radio frequency.
   - Multipath effect emulation.
 - Hight throughput.

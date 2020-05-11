@@ -1,7 +1,7 @@
 #![crate_name = "cafemq"]
 
-use rand;
-use rand_distr::{Distribution, Normal, NormalError};
+use rand::prelude::*;
+use std::f32::consts::PI;
 
 fn main() {
     let context = zmq::Context::new();
@@ -11,8 +11,8 @@ fn main() {
     assert!(rx.bind("tcp://*:4000").is_ok());
     assert!(tx.connect("tcp://localhost:2000").is_ok());
 
-    let noise = awgn(20.0).unwrap();
-    println!("{}", noise);
+    let noise = awgn();
+    println!("{} {}", noise.0, noise.1);
 
     loop {
         let mut msg;
@@ -31,9 +31,34 @@ fn main() {
     }
 }
 
-fn awgn(snr: f64) -> Result<f64, NormalError> {
-    let snr = f64::powf(10.0, snr / 20.0); //Convert SNR from dB to amplitude
-    let normal = Normal::new(0.0, snr).unwrap();
-    let val: f64 = normal.sample(&mut rand::thread_rng());
-    Ok(val)
+// Generate two independent additive white standard gaussian noise
+fn awgn() -> (f32,f32) {
+    
+    // Random number generator
+    let mut rng = rand::thread_rng();
+
+    // Generate two uniform sample that in (f32::EPSILON, 1]
+    let mut u1:f32;
+    let mut u2:f32;
+    loop{
+        u1 = rng.gen();
+        u2 = rng.gen();
+        if u1>f32::EPSILON && u2>f32::EPSILON {
+            break;
+        }
+    }
+
+    // Use Box-Muller transform to generate two independent standard gaussian sample
+    let z0 = (-2.0 * u1.ln()).sqrt() * (2.0 * PI * u2).cos();
+    let z1 = (-2.0 * u1.ln()).sqrt() * (2.0 * PI * u2).sin();
+
+    (z0,z1)
+}
+
+// Apply additive white gaussian noise to the signal with specific SNR.
+fn apply_awgn(signal:Vec<(f32,f32)>, snr:f32) -> Vec<(f32,f32)>{
+    
+    let snr = f32::powf(10.0, snr / 20.0); //Convert SNR from dB to amplitude
+
+    signal
 }

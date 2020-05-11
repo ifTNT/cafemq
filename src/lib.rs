@@ -65,7 +65,7 @@ pub mod awgn {
     use super::*;
     use num_complex::{Complex, Complex32};
     #[test]
-    fn stand_gaussian() {
+    fn standard_gaussian() {
       // The number of samples
       const N: u64 = 1000000;
       // Accumulate the samples in order to perform statistics

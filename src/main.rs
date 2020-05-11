@@ -12,8 +12,16 @@ fn main() {
     assert!(rx.bind("tcp://*:4000").is_ok());
     assert!(tx.connect("tcp://localhost:2000").is_ok());
 
-    let noise = awgn();
-    println!("{} {}", noise.0, noise.1);
+    let mut sum:Complex32 = Complex::new(0f32,0f32);
+    let mut square_sum:f32 = 0.0;
+    const n:u64 = 100000;
+    for _ in 0..n {
+        let sample = awgn();
+        sum += sample;
+        square_sum += sample.norm_sqr();
+    }
+    println!("Mu: {}", sum/n as f32);
+    println!("Sigma^2: {}", square_sum/n as f32);
 
     loop {
         let mut msg;
@@ -32,8 +40,8 @@ fn main() {
     }
 }
 
-// Generate a sample of additive white gaussian noise
-// with standard normal distribution in complex data type.
+// Generate a sample of complex additive white gaussian noise
+// with standard normal distribution.
 fn awgn() -> Complex32 {
     // Random number generator
     let mut rng = rand::thread_rng();
@@ -54,8 +62,8 @@ fn awgn() -> Complex32 {
     let z0: f32 = (-2f32 * u1.ln()).sqrt() * (2f32 * PI * u2).cos();
     let z1: f32 = (-2f32 * u1.ln()).sqrt() * (2f32 * PI * u2).sin();
 
-    // Normalize the result such that the power of noise equals to one.
-    Complex::new(z0, z1).scale(2f32.sqrt())
+    // Normalize the result such that the varience of noise equals to one.
+    Complex::new(z0, z1).scale(1f32/2f32.sqrt())
 }
 
 // Apply additive white gaussian noise to the signal with specific SNR.
@@ -67,7 +75,7 @@ fn apply_awgn(signal: Vec<Complex32>, snr: f32) -> Vec<Complex32> {
     let snr = f32::powf(10.0, snr / 20.0);
 
     // Calculate the total energy of signal
-    let energy: f32 = signal.iter().fold(0f32, |sum, val| sum + val.norm_sqr());
+    let energy: f32 = signal.iter().fold(0f32, |acc, x| acc + x.norm_sqr());
 
     // Lenght of samples. Cast to f32 for the future process
     let N = signal.len() as f32;

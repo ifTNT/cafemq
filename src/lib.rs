@@ -29,14 +29,7 @@ pub mod awgn {
     Complex::new(z0, z1).scale(1f32 / 2f32.sqrt())
   }
 
-  // Apply additive white gaussian noise to the signal with specific SNR.
-  // Parameters:
-  //   singal: The samples of source signal.
-  //   snr: The signal to noise ratio. Represent ing dB.
-  pub fn apply_awgn(signal: Vec<Complex32>, snr: f32) -> Vec<Complex32> {
-    // Convert SNR from dB to amplitude
-    let snr = f32::powf(10.0, snr / 20.0);
-
+  pub fn calc_power(signal: &Vec<Complex32>) -> f32 {
     // Calculate the total energy of signal
     let energy: f32 = signal.iter().fold(0f32, |acc, x| acc + x.norm_sqr());
 
@@ -44,11 +37,21 @@ pub mod awgn {
     let n = signal.len() as f32;
 
     // Average power = Total energy / Length of samples
-    let signal_power: f32 = energy / n;
+    energy / n
+  }
+  // Apply additive white gaussian noise to the signal with specific SNR.
+  // Parameters:
+  //   singal: The samples of source signal.
+  //   snr: The signal to noise ratio. Represent ing dB.
+  pub fn apply_awgn(signal: &Vec<Complex32>, snr: f32) -> Vec<Complex32> {
+    // Convert SNR from dB to power ratio
+    let snr = f32::powf(10.0, snr / 10.0);
 
-    // Amplitude of each awgn sample = Power of noise / Numbers of sample
-    // = (Power of signal / SNR) / Numbers of sample
-    let noise_factor: f32 = signal_power / snr / n;
+    let signal_power = calc_power(&signal);
+
+    // Amplitude of each awgn sample = sqrt(Power of noise)
+    // = sqrt(Power of signal / SNR)
+    let noise_factor: f32 = (signal_power / snr).sqrt();
 
     // Return a vector containing samples
     // that each sample equels to signal+noise.
@@ -65,7 +68,6 @@ pub mod awgn {
     fn stand_gaussian() {
       // The number of samples
       const N: u64 = 1000000;
-      
       // Accumulate the samples in order to perform statistics
       let mut sum: Complex32 = Complex::new(0f32, 0f32);
       let mut square_sum: f32 = 0.0;
@@ -80,8 +82,46 @@ pub mod awgn {
       let var = square_sum / N as f32;
 
       // Perform tests
-      assert!((mu - Complex::new(0f32, 0f32)).norm() < 1E-2, "E[awgn]={}≠0+0i", mu);
+      assert!(
+        (mu - Complex::new(0f32, 0f32)).norm() < 10E-2,
+        "E[awgn]={}≠0+0i",
+        mu
+      );
       assert!((var - 1f32).abs() < 1E-2, "Var[awgn]={}≠1", var);
+    }
+
+    #[test]
+    fn snr() {
+      // Random number generator
+      let mut rng = rand::thread_rng();
+
+      let signal: Vec<Complex32> = (0..10000)
+        .map(|_| Complex::new(rng.gen(), rng.gen()))
+        .collect();
+
+      for snr in (-10..30).step_by(10) {
+        let snr: f32 = snr as f32;
+        let dirty_signal: Vec<Complex32> = apply_awgn(&signal, snr);
+        let mut noise: Vec<Complex32> = vec![Complex::new(0f32, 0f32); dirty_signal.len()];
+        for (i, sample) in dirty_signal.iter().enumerate() {
+          noise[i] = sample - signal[i];
+        }
+
+        // Caculate the SNR
+        let signal_power = calc_power(&signal);
+        let noise_power = calc_power(&noise);
+
+        let calculated_snr = 10f32 * (signal_power/noise_power).log10();
+
+        assert!(
+          (snr - calculated_snr).abs() < 10E-1,
+          "SNR mismatch. target SNR={}dB, caculated SNR={}dB, Power of Signal={}, Power of Noise={}",
+          snr,
+          calculated_snr,
+          signal_power,
+          noise_power
+        );
+      }
     }
   }
 }

@@ -41,14 +41,14 @@ pub mod awgn {
     let energy: f32 = signal.iter().fold(0f32, |acc, x| acc + x.norm_sqr());
 
     // Lenght of samples. Cast to f32 for the future process
-    let N = signal.len() as f32;
+    let n = signal.len() as f32;
 
     // Average power = Total energy / Length of samples
-    let signal_power: f32 = energy / N;
+    let signal_power: f32 = energy / n;
 
     // Amplitude of each awgn sample = Power of noise / Numbers of sample
     // = (Power of signal / SNR) / Numbers of sample
-    let noise_factor: f32 = signal_power / snr / N;
+    let noise_factor: f32 = signal_power / snr / n;
 
     // Return a vector containing samples
     // that each sample equels to signal+noise.
@@ -56,5 +56,32 @@ pub mod awgn {
       .iter()
       .map(|x| x + awgn().scale(noise_factor))
       .collect()
+  }
+  #[cfg(test)]
+  mod tests {
+    use super::*;
+    use num_complex::{Complex, Complex32};
+    #[test]
+    fn stand_gaussian() {
+      // The number of samples
+      const N: u64 = 1000000;
+      
+      // Accumulate the samples in order to perform statistics
+      let mut sum: Complex32 = Complex::new(0f32, 0f32);
+      let mut square_sum: f32 = 0.0;
+      for _ in 0..N {
+        let sample = awgn();
+        sum += sample;
+        square_sum += sample.norm_sqr();
+      }
+
+      //Calculate the expected value and the varience of samples
+      let mu = sum / N as f32;
+      let var = square_sum / N as f32;
+
+      // Perform tests
+      assert!((mu - Complex::new(0f32, 0f32)).norm() < 1E-2, "E[awgn]={}≠0+0i", mu);
+      assert!((var - 1f32).abs() < 1E-2, "Var[awgn]={}≠1", var);
+    }
   }
 }

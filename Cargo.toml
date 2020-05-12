@@ -17,3 +17,7 @@ bencher = "^0.1.5"
 [[bench]]
 name = "awgn"
 harness = false
+
+[[bench]]
+name = "binary_complex"
+harness = false

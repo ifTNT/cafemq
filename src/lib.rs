@@ -95,7 +95,6 @@ pub mod awgn {
     fn white_noise() {
       // The number of samples
       const N: usize = 1000000;
-      
       // Generate a signal with average power euqals to one.
       let signal = vec![Complex::new(1f32, 0f32); N];
 
@@ -157,6 +156,87 @@ pub mod awgn {
           noise_power
         );
       }
+    }
+  }
+}
+
+pub mod binary_complex {
+
+  use num_complex::{Complex, Complex32};
+
+  // Convert bytes to complex. The input contains multiple sample.
+  pub fn bytes2complex(raw_samples: &Vec<u8>) -> Vec<Complex32> {
+    (0..raw_samples.len())
+      .step_by(8)
+      .map(|i| _bytes2complex(&raw_samples[i..i + 8].to_vec()))
+      .collect()
+  }
+
+  // Convert complex to bytes. The input contains multiple sample.
+  pub fn complex2bytes(samples: &Vec<Complex32>) -> Vec<u8> {
+    let raw_samples: Vec<Vec<u8>> = samples
+      .iter()
+      .map(|sample| _complex2bytes(&sample))
+      .collect();
+
+    // Flatten the byte array
+    (0..raw_samples.len() * 8)
+      .map(|i| raw_samples[i / 8][i % 8])
+      .collect()
+  }
+
+  // Convert two 32-bits long floating number to complex.
+  fn _bytes2complex(raw: &Vec<u8>) -> Complex32 {
+    // Prepare byte array
+    let mut re = [0u8; 4];
+    let mut im = [0u8; 4];
+
+    // Convert from slice to byte array
+    re.copy_from_slice(&raw[0..4]);
+    im.copy_from_slice(&raw[4..8]);
+
+    // Convert from byte array to f32
+    let re = f32::from_ne_bytes(re);
+    let im = f32::from_ne_bytes(im);
+
+    // Make the complex
+    Complex::new(re, im)
+  }
+
+  // Convert one complex to two 32-bits long floating number.
+  fn _complex2bytes(c: &Complex32) -> Vec<u8> {
+    // Convert the real part to bytes. As well as the imaginary part.
+    let re = c.re.to_ne_bytes().to_vec();
+    let im = c.im.to_ne_bytes().to_vec();
+
+    // Combine the real part and imaginary part.
+    let mut rt_val = re;
+    rt_val.extend(im);
+    rt_val
+  }
+  #[cfg(test)]
+  mod tests {
+    use super::*;
+    use rand::prelude::*;
+    #[test]
+    fn inverse_function() {
+
+      // Numbers of samples
+      const N: u32 = 1000;
+
+      // Random number generator.
+      let mut rng = rand::thread_rng();
+
+      // Generate a complex vector for testing.
+      let test_val: Vec<Complex32> = (0..N).map(
+        |_| Complex::new(rng.gen(), rng.gen())
+      ).collect();
+
+      let bytes = complex2bytes(&test_val);
+
+      let result_val = bytes2complex(&bytes);
+
+      assert_eq!(&test_val, &result_val);
     }
   }
 }

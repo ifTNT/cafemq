@@ -179,10 +179,8 @@ pub mod binary_complex {
       .map(|sample| _complex2bytes(&sample))
       .collect();
 
-    // Flatten the byte array
-    (0..raw_samples.len() * 8)
-      .map(|i| raw_samples[i / 8][i % 8])
-      .collect()
+    // Flatten converted samples.
+    raw_samples.concat()
   }
 
   // Convert two 32-bits long floating number to complex.

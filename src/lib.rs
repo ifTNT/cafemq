@@ -93,8 +93,11 @@ pub mod awgn {
 
     #[test]
     fn white_noise() {
+      // The number of samples
+      const N: usize = 1000000;
+      
       // Generate a signal with average power euqals to one.
-      let signal = vec![Complex::new(1f32, 0f32); 100];
+      let signal = vec![Complex::new(1f32, 0f32); N];
 
       // Apply awgn to signal.
       let dirty_signal = apply_awgn(&signal, 0f32);

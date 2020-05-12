@@ -1,7 +1,7 @@
 name: CaféMQ
 version: "0.1"
 author: ifTNT <happyjohn369 at gmail.com>
-about: A baseband Samples Relay with Tunable Noisy Channel for srsLTE Based on ZeroMQ
+about: A Relay of Baseband Samples with Tunable Noisy Channel for srsLTE Based on ZeroMQ
 args:
   - input:
       multiple: true

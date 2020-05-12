@@ -68,6 +68,7 @@ pub mod awgn {
     fn standard_gaussian() {
       // The number of samples
       const N: u64 = 1000000;
+
       // Accumulate the samples in order to perform statistics
       let mut sum: Complex32 = Complex::new(0f32, 0f32);
       let mut square_sum: f32 = 0.0;
@@ -92,15 +93,22 @@ pub mod awgn {
 
     #[test]
     fn white_noise() {
+      // Generate a signal with average power euqals to one.
       let signal: Vec<Complex32> = vec![Complex::new(1f32, 0f32); 100];
+
+      // Apply awgn to signal.
       let dirty_signal: Vec<Complex32> = apply_awgn(&signal, 0f32);
+
+      // Refine the noise from polluted signal.
       let mut noise: Vec<Complex32> = vec![Complex::new(0f32, 0f32); dirty_signal.len()];
       for (i, sample) in dirty_signal.iter().enumerate() {
         noise[i] = sample - signal[i];
       }
 
+      // Calculate the average power of noise.
       let noise_power = calc_power(&noise);
 
+      // By the definition, white noise should have average power equals to one.
       assert!(
         (noise_power - 1f32).abs() < 10E-2,
         "Not white noise. Power of noise={}",
@@ -110,16 +118,22 @@ pub mod awgn {
 
     #[test]
     fn snr() {
-      // Random number generator
+      // Random number generator.
       let mut rng = rand::thread_rng();
 
+      // Generate a random signal.
       let signal: Vec<Complex32> = (0..10000)
         .map(|_| Complex::new(rng.gen(), rng.gen()))
         .collect();
 
-      for snr in (-10..30).step_by(10) {
+      // Test SNR  from -30dB to 30dB.
+      for snr in (-30..30).step_by(10) {
         let snr: f32 = snr as f32;
+
+        // Apply awgn to the signal.
         let dirty_signal: Vec<Complex32> = apply_awgn(&signal, snr);
+
+        // Refine the noise from polluted signal.
         let mut noise: Vec<Complex32> = vec![Complex::new(0f32, 0f32); dirty_signal.len()];
         for (i, sample) in dirty_signal.iter().enumerate() {
           noise[i] = sample - signal[i];

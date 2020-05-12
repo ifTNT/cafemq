@@ -15,6 +15,7 @@ ZeroMQ is used here as an ideal physical channel to carry all of the baseband sa
 - Tunable additive white Gaussian noise(AWGN) channel model with specificed SNR.
 - Hight throughput.
 - Written in pure Rust.
+- Functional programming style.
 - Support AVX2 instruction set. [TODO]
 
 ## Architecture
@@ -92,7 +93,7 @@ sudo ip netns exec ue1 ping 172.16.0.1
 ```
 
 ## Result
-Use srsgui to observe the signal processed by cafeMQ. We can get the following images:  
+Use [srsgui](https://github.com/srsLTE/srsGUI) to observe the signal processed by cafeMQ. We can get the following images:  
 - SNR = 20dB ![SNR = 20dB](https://github.com/ifTNT/cafemq/raw/master/docs/media/after_awgn_snr_20dB.png)  
 - SNR = 10dB ![SNR = 10dB](https://github.com/ifTNT/cafemq/raw/master/docs/media/after_awgn_snr_10dB.png)  
 - SNR = 0dB ![SNR = 0dB](https://github.com/ifTNT/cafemq/raw/master/docs/media/after_awgn_snr_0dB.png)  
@@ -104,7 +105,7 @@ The following result was tested on Intel Core i5-8250U with Arch Linux.
 
 The criterias are:
 - awgn_apply_speed: The speed that applying additive white gaussian noises to a series of samples.
-- awgn_random_speed: The speed that generating a additive white gaussian noise.
+- awgn_random_speed: The speed that generating an additive white gaussian noise.
 - bytes2complex: The speed that converting a vector of bytes to a series of complex numbers.
 - complex2bytes: The speed that encode a series of complex numbers to bytes.
 

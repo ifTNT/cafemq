@@ -1,0 +1,25 @@
+name: CaféMQ
+version: "0.1"
+author: ifTNT <happyjohn369 at gmail.com>
+about: A baseband Samples Relay with Tunable Noisy Channel for srsLTE Based on ZeroMQ
+args:
+  - input:
+      short: i
+      long: input
+      value_name: URI
+      required: true
+      about: The input socket description of ZeroMQ
+      takes_value: true
+  - output:
+      short: o
+      long: output
+      value_name: URI
+      required: true
+      about: The output socket description of ZeroMQ
+      takes_value: true
+  - snr:
+      long: snr
+      value_name: SNR
+      about: The signal to noise ratio in dB unit.
+      takes_value: true
+      default_value: "30"

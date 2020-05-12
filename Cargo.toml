@@ -13,6 +13,7 @@ rand = "^0.7.3"
 rand_distr = "^0.2.2"
 num-complex = "^0.2.4"
 bencher = "^0.1.5"
+clap = { version = "3.0.0-beta.1", features = ["yaml"] }
 
 [[bench]]
 name = "awgn"

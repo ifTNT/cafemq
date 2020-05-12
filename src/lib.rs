@@ -91,6 +91,24 @@ pub mod awgn {
     }
 
     #[test]
+    fn white_noise() {
+      let signal: Vec<Complex32> = vec![Complex::new(1f32, 0f32); 100];
+      let dirty_signal: Vec<Complex32> = apply_awgn(&signal, 0f32);
+      let mut noise: Vec<Complex32> = vec![Complex::new(0f32, 0f32); dirty_signal.len()];
+      for (i, sample) in dirty_signal.iter().enumerate() {
+        noise[i] = sample - signal[i];
+      }
+
+      let noise_power = calc_power(&noise);
+
+      assert!(
+        (noise_power - 1f32).abs() < 10E-2,
+        "Not white noise. Power of noise={}",
+        noise_power
+      );
+    }
+
+    #[test]
     fn snr() {
       // Random number generator
       let mut rng = rand::thread_rng();
@@ -111,7 +129,7 @@ pub mod awgn {
         let signal_power = calc_power(&signal);
         let noise_power = calc_power(&noise);
 
-        let calculated_snr = 10f32 * (signal_power/noise_power).log10();
+        let calculated_snr = 10f32 * (signal_power / noise_power).log10();
 
         assert!(
           (snr - calculated_snr).abs() < 10E-1,

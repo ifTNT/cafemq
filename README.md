@@ -89,6 +89,13 @@ ping 172.16.0.2
 sudo ip netns exec ue1 ping 172.16.0.1
 ```
 
+## Result
+Use srsgui to observe the signal after processed by cafeMQ. We can get the following images:  
+- SNR = 20dB ![SNR = 20dB](https://github.com/ifTNT/cafemq/raw/master/docs/media/after_awgn_snr_20dB.png)  
+- SNR = 10dB ![SNR = 10dB](https://github.com/ifTNT/cafemq/raw/master/docs/media/after_awgn_snr_10dB.png)  
+- SNR = 0dB ![SNR = 0dB](https://github.com/ifTNT/cafemq/raw/master/docs/media/after_awgn_snr_0dB.png)  
+- SNR = -10dB ![SNR = -10dB](https://github.com/ifTNT/cafemq/raw/master/docs/media/after_awgn_snr_-10dB.png)  
+
 ## Performance
 [TODO]
 

@@ -4,25 +4,28 @@ extern crate cafemq;
 
 fn main() {
     let context = zmq::Context::new();
-    let rx = context.socket(zmq::REP).unwrap();
-    let tx = context.socket(zmq::REQ).unwrap();
+    let rx = context.socket(zmq::REQ).unwrap();
+    let tx = context.socket(zmq::REP).unwrap();
 
-    assert!(rx.bind("tcp://*:4000").is_ok());
-    assert!(tx.connect("tcp://localhost:2000").is_ok());
+    assert!(rx.connect("tcp://localhost:2000").is_ok());
+    assert!(tx.bind("tcp://*:4000").is_ok());
 
+    // Request from tx
+    let mut dummy;
+    let mut samples;
     loop {
-        let mut msg;
-        msg = rx.recv_multipart(0).unwrap();
-        println!("RX");
-        for i in &msg {
+        // Forward request from tx to rx.
+        dummy = tx.recv_bytes(0).unwrap();
+        println!("Received request");
+        println!("{}", hex::encode(&dummy));
+        rx.send(&dummy, 0).unwrap();
+
+        samples = rx.recv_multipart(0).unwrap();
+        for i in &samples {
+            let samples = i;
             //println!("{}", hex::encode(i));
-            tx.send(i, 0).unwrap();
+            tx.send(&samples, 0).unwrap();
         }
-        msg = tx.recv_multipart(0).unwrap();
-        println!("TX");
-        for i in &msg {
-            //println!("{}", hex::encode(i));
-            rx.send(i, 0).unwrap();
-        }
+        println!("{} samples responsed", 0);
     }
 }

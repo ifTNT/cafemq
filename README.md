@@ -5,14 +5,14 @@
 
 ## Introduction
 
-[srsLTE](https://github.com/srsLTE/srsLTE) provides a virtual RF front-end based on [ZeroMQ](https://zeromq.org/) for convenient development. In short, you can deploy your own LTE EPC, eNB and UE without buying any additional hardware equipments. The method has massive protential in researching and developing.  
+[SrsLTE](https://github.com/srsLTE/srsLTE) provides a virtual RF front-end based on [ZeroMQ](https://zeromq.org/) for convenient development. In short, you can deploy your own LTE EPC, eNB and UE without buying any additional hardware equipments. The method has massive protential in researching and developing.  
   
-ZeroMQ is used here as an ideal physical channel to carry all of the baseband samples from Tx to Rx. However, the ideal channel is not suitable to perform any experiment of error-correction due the error is never occured in the ideal channel. Thus, we introduced the CaféMQ (or CafeMQ for convenience). CafeMQ simulates multiple noisy channel to provide a well controled and tunable RF enviorment for the researchers, students, and other hackers.
+ZeroMQ is used here as an ideal physical channel to carry all of the baseband samples from Tx to Rx. However, the ideal channel is not suitable to perform any experiment of error-correction due the error is never occured in the ideal channel. Thus, we introduced the CaféMQ (or CafeMQ for convenience). CafeMQ can simulate multiple noisy channel to provide a well controled and tunable RF enviorment for the researchers, students, and other hackers.
 
 ## Features
 
 - Compatible with srsLTE.
-- Tunable additive white Gaussian noise(AWGN) channel model with specificed SNR.
+- Tunable additive white gaussian noise(AWGN) channel model with specificed SNR.
 - Hight throughput.
 - Written in pure Rust.
 - Functional programming style.
@@ -38,7 +38,7 @@ CafeMQ is written in rust. Plese refer to [the installation guide of rust](https
 
 Now, you can build CafeMQ from the source.
 
-```
+```bash
 git clone https://github.com/ifTNT/cafemq.git
 cd cafemq
 cargo build --release
@@ -46,56 +46,56 @@ cargo build --release
 
 The fresh binary file is lied in `target/release/cafemq`.  
 You can install it to your system via
-```
+```bash
 cargo install --path .
 ```
 
 ## Usage
 
-First, refer to [srsLTE](https://github.com/srsLTE/srsLTE) and [ZeroMQ Applaction note](https://docs.srslte.com/en/latest/app_notes/source/zeromq/source/index.html) to install the srsLTE and other dependency.
+First, refer to [srsLTE](https://github.com/srsLTE/srsLTE) , [srsGUI](https://github.com/srsLTE/srsGUI) and [ZeroMQ Applaction note](https://docs.srslte.com/en/latest/app_notes/source/zeromq/source/index.html) to install the srsLTE, srsGUI and other dependency.
 
-The following example assume you had installed srsLTE release 20.04.
+The following example assume you had installed srsLTE release 20.04.1.
 
 Launch CafeMQ:
 
-```
+```bash
 cafemq -i "tcp://localhost:2000" -o "tcp://*:4000" -i "tcp://localhost:2001" -o "tcp://*4001" --snr=10
 ```
 You can also use `cafemq --help` for more information.  
   
 Create a new namespace called "ue1":
 
-```
+```bash
 sudo ip netns add ue1
 ```
 
 Initialize srsepc:
 
-```
+```bash
 sudo srsepc
 ```
 
 Run the srsenb using the folling command:
 
-```
-srsenb --rf.device_name=zmq --rf.device_args="fail_on_disconnect=true,tx_port=tcp://*:2000,rx_port=tcp://localhost:4001,id=enb,base_srate=23.04e6" --expert.nof_phy_threads=1
+```bash
+srsenb --rf.device_name=zmq --rf.device_args="fail_on_disconnect=true,tx_port=tcp://*:2000,rx_port=tcp://localhost:4001,id=enb,base_srate=23.04e6" --expert.nof_phy_threads=1 --gui.enable 1
 ```
 
 Last, launch srsue
 
-```
-sudo ./srsue/src/srsue --rf.device_name=zmq --rf.device_args="tx_port=tcp://*:2001,rx_port=tcp://localhost:4000,id=ue,base_srate=23.04e6" --gw.netns=ue1 --phy.nof_phy_threads=1
+```bash
+sudo srsue --rf.device_name=zmq --rf.device_args="tx_port=tcp://*:2001,rx_port=tcp://localhost:4000,id=ue,base_srate=23.04e6" --gw.netns=ue1 --phy.nof_phy_threads=1 --gui.enable 1
 ```
 
-Vertify the downlink and uplink.
+Verify the downlink and uplink.
 
-```
-ping 172.16.0.2
-sudo ip netns exec ue1 ping 172.16.0.1
+```bash
+ping 172.16.0.2 # Verify the downlink
+sudo ip netns exec ue1 ping 172.16.0.1 # Verify the uplink
 ```
 
 ## Result
-Use [srsgui](https://github.com/srsLTE/srsGUI) to observe the signal processed by cafeMQ. We can get the following images:  
+Use [srsGUI](https://github.com/srsLTE/srsGUI) to observe the signal processed by CafeMQ. We can get the following results:  
 - SNR = 20dB ![SNR = 20dB](https://github.com/ifTNT/cafemq/raw/master/docs/media/after_awgn_snr_20dB.png)  
 - SNR = 10dB ![SNR = 10dB](https://github.com/ifTNT/cafemq/raw/master/docs/media/after_awgn_snr_10dB.png)  
 - SNR = 0dB ![SNR = 0dB](https://github.com/ifTNT/cafemq/raw/master/docs/media/after_awgn_snr_0dB.png)  

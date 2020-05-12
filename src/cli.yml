@@ -4,6 +4,7 @@ author: ifTNT <happyjohn369 at gmail.com>
 about: A baseband Samples Relay with Tunable Noisy Channel for srsLTE Based on ZeroMQ
 args:
   - input:
+      multiple: true
       short: i
       long: input
       value_name: URI
@@ -11,6 +12,7 @@ args:
       about: The input socket description of ZeroMQ
       takes_value: true
   - output:
+      multiple: true
       short: o
       long: output
       value_name: URI

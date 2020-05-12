@@ -16,6 +16,7 @@ ZeroMQ is used here as an ideal physical channel to carry all of the baseband sa
 - Hight throughput.
 - Written in pure Rust.
 - Functional programming style.
+- Use multi-thread to handle each channel.
 - Support AVX2 instruction set. [TODO]
 
 ## Architecture
@@ -58,9 +59,10 @@ The following example assume you had installed srsLTE release 20.04.
 Launch CafeMQ:
 
 ```
-cafemq -i "tcp://localhost:2000" -o "tcp://*:4000"
+cafemq -i "tcp://localhost:2000" -o "tcp://*:4000" -i "tcp://localhost:2001" -o "tcp://*4001" --snr=10
 ```
-
+You can also use `cafemq --help` for more information.  
+  
 Create a new namespace called "ue1":
 
 ```
@@ -76,7 +78,7 @@ sudo srsepc
 Run the srsenb using the folling command:
 
 ```
-srsenb --rf.device_name=zmq --rf.device_args="fail_on_disconnect=true,tx_port=tcp://*:2000,rx_port=tcp://localhost:2001,id=enb,base_srate=23.04e6" --expert.nof_phy_threads=1
+srsenb --rf.device_name=zmq --rf.device_args="fail_on_disconnect=true,tx_port=tcp://*:2000,rx_port=tcp://localhost:4001,id=enb,base_srate=23.04e6" --expert.nof_phy_threads=1
 ```
 
 Last, launch srsue

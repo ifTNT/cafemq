@@ -21,6 +21,7 @@ fn awgn_apply_speed(bench: &mut Bencher) {
     awgn::apply_awgn(&signal, 30f32);
   });
 
+  // 8 Bytes per sample.
   bench.bytes = (N*8) as u64;
 }
 

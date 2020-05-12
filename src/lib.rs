@@ -63,14 +63,14 @@ pub mod awgn {
   #[cfg(test)]
   mod tests {
     use super::*;
-    use num_complex::{Complex, Complex32};
+    use num_complex::Complex;
     #[test]
     fn standard_gaussian() {
       // The number of samples
       const N: u64 = 1000000;
 
       // Accumulate the samples in order to perform statistics
-      let mut sum: Complex32 = Complex::new(0f32, 0f32);
+      let mut sum = Complex::new(0f32, 0f32);
       let mut square_sum: f32 = 0.0;
       for _ in 0..N {
         let sample = awgn();
@@ -94,13 +94,13 @@ pub mod awgn {
     #[test]
     fn white_noise() {
       // Generate a signal with average power euqals to one.
-      let signal: Vec<Complex32> = vec![Complex::new(1f32, 0f32); 100];
+      let signal = vec![Complex::new(1f32, 0f32); 100];
 
       // Apply awgn to signal.
-      let dirty_signal: Vec<Complex32> = apply_awgn(&signal, 0f32);
+      let dirty_signal = apply_awgn(&signal, 0f32);
 
       // Refine the noise from polluted signal.
-      let mut noise: Vec<Complex32> = vec![Complex::new(0f32, 0f32); dirty_signal.len()];
+      let mut noise = vec![Complex::new(0f32, 0f32); dirty_signal.len()];
       for (i, sample) in dirty_signal.iter().enumerate() {
         noise[i] = sample - signal[i];
       }
@@ -122,7 +122,7 @@ pub mod awgn {
       let mut rng = rand::thread_rng();
 
       // Generate a random signal.
-      let signal: Vec<Complex32> = (0..10000)
+      let signal = (0..10000)
         .map(|_| Complex::new(rng.gen(), rng.gen()))
         .collect();
 
@@ -131,10 +131,10 @@ pub mod awgn {
         let snr: f32 = snr as f32;
 
         // Apply awgn to the signal.
-        let dirty_signal: Vec<Complex32> = apply_awgn(&signal, snr);
+        let dirty_signal = apply_awgn(&signal, snr);
 
         // Refine the noise from polluted signal.
-        let mut noise: Vec<Complex32> = vec![Complex::new(0f32, 0f32); dirty_signal.len()];
+        let mut noise = vec![Complex::new(0f32, 0f32); dirty_signal.len()];
         for (i, sample) in dirty_signal.iter().enumerate() {
           noise[i] = sample - signal[i];
         }
